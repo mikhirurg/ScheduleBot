@@ -77,8 +77,9 @@ public class ScheduleBot extends ListenerAdapter {
         }
     }
 
-    private boolean checkCommand(String command) {
-        return command.startsWith("!") && command.length() > 1 && command.split(" ").length == 1;
+    private boolean checkCommand(String message) {
+        String command = message.split(" ")[0];
+        return command.startsWith("!") && message.length() > 1;
     }
 
     private void sendWeek(MessageReceivedEvent event, boolean isShort) throws IOException {
