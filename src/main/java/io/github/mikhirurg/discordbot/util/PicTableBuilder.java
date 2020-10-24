@@ -17,9 +17,9 @@ public class PicTableBuilder {
         int x = 0, y = 0;
     }
 
-    private static final double scaleX = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+    private static final double scaleX = GraphicsEnvironment.isHeadless() ? 1 : GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
             .getDefaultConfiguration().getDefaultTransform().getScaleX();
-    private static final double scaleY = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+    private static final double scaleY = GraphicsEnvironment.isHeadless() ? 1 :GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
             .getDefaultConfiguration().getDefaultTransform().getScaleY();
 
     private static final int logoWidth = 150;
@@ -27,7 +27,7 @@ public class PicTableBuilder {
 
     public static BufferedImage buildTable(List<Day> week, List<Integer> cols, List<String> days) throws IOException {
         int maxWidth;
-        BufferedImage dummy = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        BufferedImage dummy = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
 
         BufferedImage logo = ImageIO.read(PicTableBuilder.class.getClassLoader().getResourceAsStream("logo.png"));
         int width = logoWidth;
@@ -71,7 +71,7 @@ public class PicTableBuilder {
                                 .getFontMetrics()
                                 .getHeight() * scaleY);
 
-        BufferedImage image = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.apache.commons.collections4.OrderedMap;
+import org.apache.commons.collections4.map.LinkedMap;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -23,7 +25,7 @@ import java.util.Properties;
 
 public class ScheduleBot extends ListenerAdapter {
     private Map<String, UserConfig> map;
-    private final Map<String, String> help;
+    private final OrderedMap<String, String> help;
     private final String fileToSave;
 
     public ScheduleBot(Properties helpFile, Properties properties) throws ClassNotFoundException {
@@ -33,7 +35,7 @@ public class ScheduleBot extends ListenerAdapter {
         } catch (IOException exception) {
             map = new HashMap<>();
         }
-        help = new HashMap<>();
+        help = new LinkedMap<>();
         helpFile.stringPropertyNames()
                 .forEach(key -> help.put(key, helpFile.getProperty(key)));
     }
@@ -44,28 +46,28 @@ public class ScheduleBot extends ListenerAdapter {
         Message message = event.getMessage();
         if (!event.getAuthor().isBot()) {
             try {
-                if (message.getContentRaw().equals("!full")) {
-                    sendWeek(event, false);
-                } else if (message.getContentRaw().equals("!short")) {
-                    sendWeek(event, true);
-                } else if (message.getContentRaw().equals("!today")) {
-                    sendToday(event, true);
-                } else if (message.getContentRaw().equals("!tomorrow")) {
-                    sendTomorrow(event, true);
-                } else if (message.getContentRaw().split(" ")[0].equals("!setgroup")) {
-                    processSetGroup(event, message);
-                } else if (message.getContentRaw().equals("!picmode")) {
-                    processTableMode(event);
-                } else if (message.getContentRaw().equals("!weekmode")) {
-                    processWeekMode(event);
-                } else if (message.getContentRaw().equals("!help")) {
-                    sendHelp(event);
-                } else if (message.getContentRaw().equals("!today_full")) {
-                    sendToday(event, false);
-                } else if (message.getContentRaw().equals("!tomorrow_full")) {
-                    sendTomorrow(event, false);
-                } else {
-                    processUnknownCommand(event);
+                if (checkCommand(message.getContentRaw())) {
+                    if (message.getContentRaw().equals("!full")) {
+                        sendWeek(event, false);
+                    } else if (message.getContentRaw().equals("!short")) {
+                        sendWeek(event, true);
+                    } else if (message.getContentRaw().equals("!today")) {
+                        sendToday(event, true);
+                    } else if (message.getContentRaw().equals("!tomorrow")) {
+                        sendTomorrow(event, true);
+                    } else if (message.getContentRaw().split(" ")[0].equals("!setgroup")) {
+                        processSetGroup(event, message);
+                    } else if (message.getContentRaw().equals("!picmode")) {
+                        processTableMode(event);
+                    } else if (message.getContentRaw().equals("!weekmode")) {
+                        processWeekMode(event);
+                    } else if (message.getContentRaw().equals("!helpme")) {
+                        sendHelp(event);
+                    } else if (message.getContentRaw().equals("!today_full")) {
+                        sendToday(event, false);
+                    } else if (message.getContentRaw().equals("!tomorrow_full")) {
+                        sendTomorrow(event, false);
+                    }
                 }
             } catch (GroupNotSetException e) {
                 event.getChannel().sendMessage("Send command `!setgroup` to set group for your user!").queue();
@@ -73,6 +75,10 @@ public class ScheduleBot extends ListenerAdapter {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean checkCommand(String command) {
+        return command.startsWith("!") && command.length() > 1 && command.split(" ").length == 1;
     }
 
     private void sendWeek(MessageReceivedEvent event, boolean isShort) throws IOException {
@@ -162,7 +168,7 @@ public class ScheduleBot extends ListenerAdapter {
     private void processSetGroup(MessageReceivedEvent event, Message message) {
         String[] params = message.getContentRaw().split(" ");
         if (params.length == 2) {
-            String group = message.getContentRaw().split(" ")[1];
+            String group = message.getContentRaw().split(" ")[1].toUpperCase();
             UserConfig config = map.get(event.getAuthor().getId());
             if (config == null) {
                 UserConfig userConfig = new UserConfig(group, false);
@@ -199,10 +205,6 @@ public class ScheduleBot extends ListenerAdapter {
         }
         event.getChannel().sendMessage("Week mode set successfully!").queue();
         saveMap();
-    }
-
-    private void processUnknownCommand(MessageReceivedEvent event) {
-        event.getChannel().sendMessage("I cant understand this command! Please print `!help` to get information about possible commands.").queue();
     }
 
     private void sendHelp(MessageReceivedEvent event) {
