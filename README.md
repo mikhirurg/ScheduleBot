@@ -15,10 +15,14 @@ Possible commands:
 - _!weekmode_ - Change schedule week style: full schedule or odd-even week schedule.
 - _!picmode_ - Change style of schedule: text or image.
 
-To configure a bot, you need to run the bot app and pass the "bot-settings.properties" file with config data as a command-line argument.
+# Docker
 
-"bot-settings.properties" file format:
-````
-token=BOT_TOKEN
-save=FILE_FOR_LOCAL_STORAGE
-````
+### Build
+```sh
+docker build -t schedule_itmo_bot .
+```
+
+### Run
+```sh
+docker run -e TOKEN="<Your Token>" schedule_itmo_bot
+```
