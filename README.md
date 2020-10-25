@@ -27,3 +27,14 @@ docker build -t schedule_itmo_bot .
 ```sh
 docker run -e TOKEN="<Your Token>" schedule_itmo_bot
 ```
+
+# Building manually 
+Run in command prompt: 
+```sh
+mvn clean package assembly:single
+```
+
+Or easily execute:
+```sh
+./build.sh
+```
