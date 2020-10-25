@@ -14,5 +14,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Login docker registry
+      run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+    - name: Build docker image
+      run: docker build . --file Dockerfile --tag schedule_bot
+    - name: Send to registry
+      run:  docker push schedule_bot
