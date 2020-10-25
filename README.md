@@ -1,3 +1,4 @@
+![Docker Image CI](https://github.com/ch4t5ky/ScheduleBot/workflows/Docker%20Image%20CI/badge.svg?branch=master&event=push)
 # ITMO University schedule bot for Discord
 
 ![](img/logo.png)
